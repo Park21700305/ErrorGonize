@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.errorgonize.qna.store.QnaStore">
+    <insert id="createQ" parameterType="io.errorgonize.qna.entity.Qna">
+        insert into question (category, writer, questionTitle, questionContent, writerId)
+            values (#{category}, #{writer}, #{questionTitle}, #{questionContent}, #{writerId})
+    </insert>
+
+    <insert id="createA" parameterType="io.errorgonize.qna.entity.Qna">
+        insert into answer (questionNo, answerContent, writerId, writer)
+            values (#{questionNo}, #{answerContent}, #{writerId}, #{writer})
+    </insert>
+
+    <select id="getQnaId" resultType="java.lang.Integer">
+        select LAST_INSERT_ID()
+    </select>
+
+    <update id="updateQ" parameterType="io.errorgonize.qna.entity.Qna">
+        update question
+        set
+            moddate=NOW(),
+            category=#{category},
+            questionTitle=#{questionTitle},
+            questionContent=#{questionContent},
+            curious=#{curious},
+            viewCnt=#{viewCnt}
+        where
+            questionNo=#{questionNo}
+    </update>
+
+    <update id="updateA" parameterType="io.errorgonize.qna.entity.Qna">
+        update answer
+        set
+            moddate=NOW(),
+            answerContent=#{answerContent},
+            clap=#{clap}
+        where
+            questionNo=#{questionNo}
+    </update>
+
+    <delete id="deleteQ">
+        delete from question, answer where questionNo=#{questionNo}
+    </delete>
+
+    <delete id="deleteA">
+        delete from answer where questionNo=#{questionNo} AND answerNo=#{answerNo}
+    </delete>
+
+    <select id="retrieve" resultType="io.errorgonize.qna.entity.Qna">
+        select * from question left outer join answer
+            on question.questionNo = answer.questionNo
+                where question.questionNo=#{questionNo}
+    </select>
+
+    <select id="retrieveAll" resultType="io.errorgonize.qna.entity.Qna">
+        select * from question left outer join answer
+            on question.questionNo = answer.questionNo
+                ORDER BY question.moddate DESC
+    </select>
+</mapper>

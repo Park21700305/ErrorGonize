@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.errorgonize.note.store.NoteStore">
+    <insert id="create" parameterType="io.errorgonize.note.entity.Note">
+        insert into note (writerId, category, visible, noteTitle, noteContent) values (#{writerId}, #{category}, #{visible}, #{noteTitle}, #{noteContent})
+    </insert>
+
+    <select id="getNoteId" resultType="java.lang.Integer">
+        select LAST_INSERT_ID()
+    </select>
+
+    <update id="update" parameterType="io.errorgonize.note.entity.Note">
+        update note
+        set
+            moddate=NOW(),
+            category=#{category},
+            visible=#{visible},
+            noteTitle=#{noteTitle},
+            noteContent=#{noteContent}
+        where
+            noteNo=#{noteNo}
+    </update>
+
+    <delete id="delete">
+        delete from note where noteNo=#{noteNo}
+    </delete>
+
+    <select id="retrieve" resultType="io.errorgonize.note.entity.Note">
+        select * from note where noteNo=#{noteNo}
+    </select>
+
+    <select id="retrieveAll" resultType="io.errorgonize.note.entity.Note">
+        select * from note
+    </select>
+</mapper>
